@@ -1,0 +1,49 @@
+{
+  "step": "steps/01-connect.md",
+  "model": "inkling-2-mini",
+  "seed": 42,
+  "ok": true,
+  "rounds": [
+    {
+      "round": 0,
+      "files": [
+        "ConnectView.swift",
+        "ConnectedView.swift",
+        "RootView.swift",
+        "SessionModel.swift",
+        "VisualTerminalApp.swift"
+      ],
+      "build_ok": false,
+      "errors": 1,
+      "seconds": 421.6,
+      "eval_count": 3505,
+      "prompt_eval_count": 2041,
+      "done_reason": "stop"
+    },
+    {
+      "round": 1,
+      "files": [
+        "ConnectedView.swift"
+      ],
+      "build_ok": false,
+      "errors": 1,
+      "seconds": 128.2,
+      "eval_count": 1173,
+      "prompt_eval_count": 4982,
+      "done_reason": "stop"
+    },
+    {
+      "round": 2,
+      "files": [
+        "ConnectView.swift",
+        "SessionModel.swift"
+      ],
+      "build_ok": true,
+      "errors": 0,
+      "seconds": 195.7,
+      "eval_count": 2108,
+      "prompt_eval_count": 5768,
+      "done_reason": "stop"
+    }
+  ]
+}

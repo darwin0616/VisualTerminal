@@ -1,0 +1,2 @@
+ConnectView.swift:50: error: generic struct 'ForEach' requires that 'RecentServer' conform to 'Hashable'
+    ForEach(session.recentServers, id: \.self) { server in

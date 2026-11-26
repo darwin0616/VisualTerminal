@@ -1,0 +1,11 @@
+# SwiftPM / Xcode
+.build/
+.swiftpm/
+App/build/
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.DS_Store
+
+# inkling 開發迴圈的完整紀錄（含每輪原始碼快照）；精選的紀錄放在 evaluation/runs/
+/runs/

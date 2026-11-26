@@ -1,0 +1,2 @@
+ConnectedView.swift:34: error: instance member 'monospaced' cannot be used on type 'Font'
+    .font(.monospaced())

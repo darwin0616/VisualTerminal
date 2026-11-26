@@ -1,0 +1,51 @@
+name: VisualTerminal
+options:
+  bundleIdPrefix: local.ruankaiyan
+  deploymentTarget:
+    macOS: "15.0"
+packages:
+  VisualTerminal:
+    path: ..
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+targets:
+  VisualTerminal:
+    type: application
+    platform: macOS
+    sources: [VisualTerminal]
+    dependencies:
+      - package: VisualTerminal
+        product: VisualTerminalCore
+    settings:
+      base:
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: NO
+    info:
+      path: VisualTerminal/Info.plist
+      properties:
+        CFBundleDisplayName: VisualTerminal
+        CFBundleDevelopmentRegion: zh-Hant
+        CFBundleLocalizations: [zh-Hant]
+  VisualTerminalUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources: [VisualTerminalUITests]
+    dependencies:
+      - target: VisualTerminal
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_STRICT_CONCURRENCY: minimal
+        CODE_SIGN_IDENTITY: "-"
+schemes:
+  VisualTerminal:
+    build:
+      targets:
+        VisualTerminal: all
+        VisualTerminalUITests: [test]
+    test:
+      targets: [VisualTerminalUITests]
