@@ -15,7 +15,7 @@ struct ConnectView: View {
                     TextField("主機（IP 或網域）", text: Bindable(session).host)
                     TextField("Port", text: Binding(
                         get: { String(session.port) },
-                        set: { session.port = Int($0.filter(\.isNumber)) ?? 0 }
+                        set: { session.port = Int(toHalfWidth($0).filter(\.isNumber)) ?? 0 }
                     ))
                     .frame(maxWidth: 120)
                     TextField("帳號", text: Bindable(session).username)
@@ -57,7 +57,7 @@ struct ConnectView: View {
                             HStack {
                                 Text("\(server.username)@\(server.host)")
                                 Spacer()
-                                Text(":\(server.port)")
+                                Text(verbatim: ":\(server.port)")
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: 420, alignment: .leading)
@@ -82,7 +82,7 @@ struct ConnectView: View {
         } message: {
             if let info = session.pendingHostKey {
                 Text("""
-                主機：\(info.host):\(info.port)
+                主機：\(info.host):\(String(info.port))
                 金鑰類型：\(info.keyType)
                 指紋：\(info.fingerprint)
 

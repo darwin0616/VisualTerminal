@@ -8,7 +8,7 @@ struct RootView: View {
         Group {
             switch session.state {
             case .connected:
-                ConnectedView()
+                WorkspaceView()
             default:
                 ConnectView()
             }

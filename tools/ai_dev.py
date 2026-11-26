@@ -54,11 +54,12 @@ def ask(args, messages: list[dict]) -> dict:
 
 
 def extract(text: str) -> dict[str, str]:
+    """只抽取第一行附近有 `// File: 檔名.swift` 的程式碼區塊；說明文字中的程式碼片段一律忽略。"""
     files = {}
-    for i, block in enumerate(CODE_RE.findall(text), 1):
-        if block.strip():
-            m = FILE_RE.search("\n".join(block.split("\n")[:3]))
-            files[m.group(1) if m else f"File{i}.swift"] = block
+    for block in CODE_RE.findall(text):
+        m = FILE_RE.search("\n".join(block.split("\n")[:3]))
+        if block.strip() and m:
+            files[m.group(1)] = block
     return files
 
 
@@ -134,7 +135,15 @@ def main() -> None:
     ok = False
     for r in range(args.rounds + 1):
         print(f"[第 {r} 輪] 詢問 {args.model}…", flush=True)
-        resp = ask(args, messages)
+        try:
+            resp = ask(args, messages)
+        except Exception as e:  # 例如 Ollama 記憶體不足回傳 500：還原原始碼並記錄，不要留下半成品
+            write_sources(original)
+            (out / "result.json").write_text(json.dumps({"step": str(args.step), "model": args.model, "seed": args.seed,
+                                                         "ok": False, "error": f"第 {r} 輪呼叫模型失敗：{e}",
+                                                         "rounds": rounds}, ensure_ascii=False, indent=2), encoding="utf-8")
+            print(f"呼叫模型失敗（{e}）：原始碼已還原，紀錄在 {out}")
+            sys.exit(2)
         (out / f"response_r{r}.md").write_text(resp["content"], encoding="utf-8")
         new = extract(resp["content"])
         files.update(new)
@@ -151,8 +160,12 @@ def main() -> None:
         if ok:
             break
         (out / f"errors_r{r}.txt").write_text("\n".join(errs), encoding="utf-8")
-        messages += [{"role": "assistant", "content": resp["content"]},
-                     {"role": "user", "content": repair_prompt(errs)}]
+        # 只帶出錯的檔案與錯誤訊息，不附上整段舊回覆（上下文過大會讓模型耗盡 GPU 記憶體）
+        bad = sorted({e.split(":")[0] for e in errs if e.split(":")[0] in files}) or sorted(new)
+        ctx_bad = "\n\n".join(f"```swift\n// File: {n}\n{files[n].rstrip()}\n```" for n in bad)
+        messages = [messages[0], {"role": "user", "content":
+                    args.step.read_text(encoding="utf-8").strip() + "\n\n【目前有錯誤的檔案】\n" + ctx_bad
+                    + "\n\n" + repair_prompt(errs) + FORMAT}]
 
     if not ok:
         write_sources(original)

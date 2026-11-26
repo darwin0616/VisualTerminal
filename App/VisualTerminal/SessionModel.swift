@@ -2,6 +2,22 @@
 import Foundation
 import VisualTerminalCore
 
+func toHalfWidth(_ s: String) -> String {
+    var result = ""
+    result.reserveCapacity(s.count)
+    for ch in s {
+        let scalar = ch.unicodeScalars.first!
+        if scalar.value >= 0xFF01 && scalar.value <= 0xFF5E {
+            result.unicodeScalars.append(UnicodeScalar(scalar.value - 0xFEE0)!)
+        } else if scalar.value == 0x3000 {
+            result.append(" ")
+        } else {
+            result.append(ch)
+        }
+    }
+    return result
+}
+
 struct RecentServer: Codable, Equatable, Hashable, Sendable {
     var host: String
     var port: Int
@@ -45,11 +61,14 @@ final class SessionModel {
         state = .connecting
         errorMessage = nil
 
+        let cleanHost = toHalfWidth(host).trimmingCharacters(in: .whitespaces)
+        let cleanUsername = toHalfWidth(username).trimmingCharacters(in: .whitespaces)
+
         do {
             let conn = try await SSHConnection.connect(
-                host: host.trimmingCharacters(in: .whitespaces),
+                host: cleanHost,
                 port: port,
-                username: username.trimmingCharacters(in: .whitespaces),
+                username: cleanUsername,
                 password: password,
                 onUnknownHost: { [weak self] info in
                     guard let self else { return false }
@@ -61,9 +80,9 @@ final class SessionModel {
             )
             connection = conn
             state = .connected
-            addRecentServer(RecentServer(host: host.trimmingCharacters(in: .whitespaces),
+            addRecentServer(RecentServer(host: cleanHost,
                                          port: port,
-                                         username: username.trimmingCharacters(in: .whitespaces)))
+                                         username: cleanUsername))
             password = ""
         } catch {
             state = .disconnected

@@ -1,0 +1,4 @@
+File10.swift:16: error: Expected '}' in struct (in target 'VisualTerminal' from project 'VisualTerminal' at path '/Users/ruankaiyan/MacProject/VisualTerminal/App/VisualTerminal.xcodeproj')
+    
+File14.swift:1: error: Expressions are not allowed at the top level (in target 'VisualTerminal' from project 'VisualTerminal' at path '/Users/ruankaiyan/MacProject/VisualTerminal/App/VisualTerminal.xcodeproj')
+    Toggle("名稱", isOn: Binding(

@@ -1,5 +1,4 @@
 // 操作一遍目前的功能並截圖（連到本機測試 SSH 伺服器 127.0.0.1:2222，tester / tester）
-import Carbon
 import XCTest
 
 final class ScreenshotTour: XCTestCase {
@@ -12,13 +11,9 @@ final class ScreenshotTour: XCTestCase {
         XCTAssertTrue(window.waitForExistence(timeout: 10))
         shot(window, "01-連線畫面")
 
-        // 中文輸入法會把打的字變成全形：測試期間暫時切到 ABC，結束後切回原本的輸入法
-        let original = TISCopyCurrentKeyboardInputSource().takeRetainedValue()
-        defer { TISSelectInputSource(original) }
-        let filter = [kTISPropertyInputSourceID as String: "com.apple.keylayout.ABC"] as CFDictionary
-        if let list = TISCreateInputSourceList(filter, false)?.takeRetainedValue() as? [TISInputSource], let abc = list.first {
-            TISSelectInputSource(abc)
-        }
+        // 中文輸入法會把自動輸入的字變成全形：暫時切到 ABC，結束後依 ID 切回原本的輸入法
+        let restoreInput = InputSource.useABC()
+        defer { restoreInput() }
         let host = window.textFields.element(boundBy: 0)
         type("127.0.0.1", into: host)
         let port = window.textFields.element(boundBy: 1)

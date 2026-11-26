@@ -21,6 +21,8 @@ let package = Package(
         .executableTarget(name: "vt-probe", dependencies: ["VisualTerminalCore"]),
         // 驗證 App 的 SessionModel（符號連結到 App/VisualTerminal/SessionModel.swift）
         .executableTarget(name: "vt-model-probe", dependencies: ["VisualTerminalCore"]),
+        // 驗證 App 的 Blocks / WorkspaceModel（符號連結）
+        .executableTarget(name: "vt-blocks-probe", dependencies: ["VisualTerminalCore"]),
         .testTarget(name: "VisualTerminalCoreTests", dependencies: ["VisualTerminalCore"]),
     ]
 )
